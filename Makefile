@@ -1,6 +1,6 @@
 GV=6
 
-mcbot:
+acmbot:
 	$(GV)g main.go config.go xmlstructs.go
 	$(GV)l -o acm-bot main.$(GV)
 
