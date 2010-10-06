@@ -1,2 +1,5 @@
+To build, first install go-ircbot from http://github.com/ckolbeck/go-ircbot, then run `make`.
+
+
 The provided example.conf will not be automatically loaded, and must be specified on the command line.  If no configuration file is provided on the command line, the bot will attempt to load <executable-name>.conf, failing that, it will die with an error message.
 

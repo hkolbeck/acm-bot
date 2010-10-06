@@ -1,11 +1,11 @@
 package main
 
 import (
+	"cbeck/ircbot"
 	"json"
 	"io/ioutil"
 	"os"
 	"log"
-	"./ircbot"
 )
 
 type botConfig struct {
