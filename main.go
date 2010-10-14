@@ -345,7 +345,7 @@ func getCal(args []string) (result string) {
 	}
 
 
-	response, _, err := http.Get(fmt.Sprintf("http://www.google.com/calendar/feeds/psuacm%%40cs.pdx.edu/public/basic?start-min=%s&start-max=%s&prettyprint=true&fields=openSearch:totalResults,entry(title,content)", 
+	response, _, err := http.Get(fmt.Sprintf("http://www.google.com/calendar/feeds/psuacm%%40cs.pdx.edu/public/basic?start-min=%s&start-max=%s&prettyprint=true&fields=openSearch:totalResults,entry(title,content)&orderby=starttime", 
 		start.Format(time.RFC3339), end.Format(time.RFC3339)))
 
 	if err != nil {
