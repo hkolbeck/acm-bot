@@ -11,7 +11,6 @@ import (
 	"json"
 	"io/ioutil"
 	"os"
-	"log"
 )
 
 type botConfig struct {
@@ -57,12 +56,12 @@ func initParseConfig() {
 	config, err = parseConfig(configPath)
 
 	if err != nil {
-		log.Stderrf("[E] Failed to parse config file: %s\n --exiting--", err.String())
+		errors.Printf("Failed to parse config file: %s\n --exiting--", err.String())
 		os.Exit(1)
 	}
 
 	if config.BotName == "" || config.Server == "" {
-		log.Stderrf("[E] Malformed config file or missing item,\n%#v\n exiting", config)
+		errors.Printf("Malformed config file or missing item,\n%#v\n exiting", config)
 		os.Exit(1)
 	}
 

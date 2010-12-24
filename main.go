@@ -27,6 +27,9 @@ var config *botConfig
 var helpList string
 var bot *ircbot.Bot
 
+var errors = log.New(os.Stderr, "[E]", log.Ldate | log.Ltime)
+var info = log.New(os.Stderr, "[E]", log.Ldate | log.Ltime)
+
 func init() {
 	flag.StringVar(&configPath, "c", os.Args[0] + ".conf", "config file to use, defaults to <executable name>.conf")
 	
@@ -185,9 +188,10 @@ func parseChat(msg string, m *ircbot.Message) (reply string) {
 			response, finalURL, err := http.Get(m[0])
 			
 			if err != nil {
-				log.Stderrf("[E] %s - Fetch failed: %s\n", m[0], err.String())
+				errors.Printf("%s - Fetch failed: %s\n", m[0], err.String())
 			} else if finalURL != m[0] || config.TitleWhitelist[m[1]] {
 				if t := getTitle(response.Body); t != "" {
+					info.Println("Fetched: " + m[0])
 					reply += fmt.Sprintf("Title:%s\n", t)
 				}
 			}
@@ -267,7 +271,7 @@ func dictLookup(query []string) (reply string) {
 	response, _, err := http.Get(fmt.Sprintf("http://jws-champo.ac-toulouse.fr:8080/wordnet-xml/servlet?word=%s&submit=Query", q))
 	
 	if err != nil {
-		log.Stderrf("[E] GET error: %s\n", err.String())
+		errors.Printf("GET error: %s\n", err.String())
 		return fmt.Sprintf("Unable to reach WordNet, try again later\n", q)
 	}
 
@@ -277,7 +281,7 @@ func dictLookup(query []string) (reply string) {
 	err = xml.Unmarshal(response.Body, wq)
 	
 	if err != nil {
-		log.Stderrf("[E] XML unmarshal error: %s\n", err.String())
+		errors.Printf("XML unmarshal error: %s\n", err.String())
 		return fmt.Sprintf("Entry for %s seems to be corrupted\n", q)
 	}
 	
@@ -310,6 +314,10 @@ func getCal(args []string) (result string) {
 
 		end = time.LocalTime()
 		end.Month += scheduleHorizon
+		if end.Month > 12 {
+			end.Month %= 12
+			end.Year++
+		}
 	} else if len(args) == 1 {
 		start = parseTime(args[0])
 
@@ -349,7 +357,7 @@ func getCal(args []string) (result string) {
 		start.Format(time.RFC3339), end.Format(time.RFC3339)))
 
 	if err != nil {
-		log.Stderrf("[E] Error retrieving calendar: %v\n", err)
+		errors.Printf("Error retrieving calendar: %v\n", err)
 		return "Error retrieving calendar from teh google"
 	}
 	
@@ -359,7 +367,7 @@ func getCal(args []string) (result string) {
 	err = xml.Unmarshal(response.Body, f)
 
 	if err != nil {
-		log.Stderrf("[E] Error parsing calendar xml: %v\n", err)
+		errors.Printf("Error parsing calendar xml: %v\n", err)
 		return "XML Fail:  Go yell at cbeck for not using json."
 	}
 	
